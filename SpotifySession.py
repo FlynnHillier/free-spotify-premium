@@ -108,7 +108,50 @@ class SpotifySession:
         except:
             return False
 
+
+    def spotify_log_in(self,
+        email:str,
+        password:str,
+    ) -> bool:
+        if self.spotify_is_logged_in():
+            return False
         
+        login_url = "https://accounts.spotify.com/en-GB/login?continue=https%3A%2F%2Fwww.spotify.com%2Fuk%2Faccount%2Foverview%2F"
+
+        self.driver.get(login_url)
+
+        self.spotify_accept_cookies_popup()
+
+        ## email
+        elem_email_input = self.driver.find_element(By.ID,"login-username")
+        elem_email_input.click()
+        elem_email_input.send_keys(email)
+
+        ## password
+        elem_pass_input = self.driver.find_element(By.ID,"login-password")
+        elem_pass_input.click()
+        elem_pass_input.send_keys(password)
+
+        #login button
+        elem_submit_button = self.driver.find_element(By.ID,"login-button")
+        elem_submit_button.click()
+
+
+        try:
+            WebDriverWait(self.driver,timeout=15).until(
+                EC.url_contains("https://www.spotify.com/uk/account/overview/")
+            )
+        except TimeoutError:
+            #did not redirect in time
+            return False
+        
+        #sometimes cookie popup appears post-login
+        self.spotify_accept_cookies_popup()
+
+        return True
+
+
+
 
     def spotify_fetch_user_details(self) -> Tuple[str,str]:
         self.driver.get("https://www.spotify.com/uk/account/overview/")
@@ -123,9 +166,16 @@ class SpotifySession:
             #cookies already accepted
             return False
 
-        sleep(3) #wait a few seconds for fade in animation so consent button becomes clickable
-        self.driver.find_element(By.ID,"onetrust-accept-btn-handler").click()
+        try:
+            #wait 5 seconds for popup
+            WebDriverWait(self.driver,timeout=5).until(
+                EC.element_to_be_clickable((By.ID,"onetrust-accept-btn-handler"))
+            )
+        except:
+            #popup did not show
+            return False
 
+        self.driver.find_element(By.ID,"onetrust-accept-btn-handler").click()
         return True
 
 
