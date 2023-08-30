@@ -1,0 +1,6 @@
+#enviroment
+venv
+.env
+
+#caching
+.cache*
