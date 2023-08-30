@@ -4,3 +4,9 @@ venv
 
 #caching
 .cache*
+
+#cookies
+*.pkl
+
+#bin
+__pycache__

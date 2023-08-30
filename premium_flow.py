@@ -14,7 +14,7 @@ def premium_account_gen_flow(
     card_cvv:str, #xxx
     email:str | None = None,
     password:str | None = None,
-) -> Tuple[str,str,bool,bool]:
+) -> Tuple[str,str,str,bool,bool]:
     session = SpotifySession(cookies_fp=None)
 
     signup_success,email,password = session.spotify_signup(
@@ -24,11 +24,15 @@ def premium_account_gen_flow(
 
     if not signup_success:
         print("failed signing up.")
-        return ("","",False,False)
-    else:
-        print("successfully signed up.")
-        print(f"email: {email}")
-        print(f"password: {password}")
+        return ("","","",False,False)
+    
+    print("successfully signed up.")
+    print(f"email: {email}")
+    print(f"password: {password}")
+
+    _,username = session.spotify_fetch_user_details()
+
+    print(f"username: {username}")
     
     premium_activation_success = session.spotify_premium_plan_signup(
         plan_url=premium_promotion_url,
@@ -40,7 +44,7 @@ def premium_account_gen_flow(
 
     if not premium_activation_success:
         print("failed activating premium.")
-        return (email,password,False,False)
+        return (email,password,username,False,False)
     else:
         print("activated premium.")
 
@@ -49,13 +53,8 @@ def premium_account_gen_flow(
 
     if not premium_deactivation_success:
         print("failed to deactivate premium.")
-        return (email,password,True,False)
+        return (email,password,username,True,False)
     else:
         print("deactivated premium.")
 
-    
-    sleep(5)
-
-    session.driver.quit()
-
-    return (email,password,True,True)
+    return (email,password,username,True,True)

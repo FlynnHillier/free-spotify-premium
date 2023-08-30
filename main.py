@@ -1,76 +1,115 @@
 import os
-from dotenv import load_dotenv
-import spotipy
+
+from premium_flow import premium_account_gen_flow
+from playlists import rip_all_playlists
+from SpotifyDeveloperSession import SpotifyDeveloperSession
+
 from spotipy.oauth2 import SpotifyOAuth
+from spotipy import Spotify
+from pathlib import Path
 
-load_dotenv()
+rip_playlists_from_user_target_id = ""
+
+developer_cookies_fp = ""
+dev_email = ""
+dev_pass = ""
+
+card_number = "" # xxxxxxxxxxxxxxxx
+card_exp_month = "" # xx
+card_exp_year = "" # xx
+card_cvv = "" # xxx
 
 
-OAUTH = SpotifyOAuth(
+def main():
+
+    ## initialise developer session
+
+    if Path(developer_cookies_fp).exists():
+        #load with cookies
+        dev_sess = SpotifyDeveloperSession(cookies_fp=developer_cookies_fp)
+    else:
+        #load without cookies
+        dev_sess = SpotifyDeveloperSession()
+
+
+    if not dev_sess.spotify_is_logged_in():
+        #log developer in
+        dev_login_success = dev_sess.spotify_log_in(dev_email,dev_pass)
+
+        if not dev_login_success:
+            print("failed to log in developer account")
+            return False
+        else:
+            print(f"logged in developer account: {dev_email}")
+    
+    #resave developer cookies
+    dev_sess.save_cookies(developer_cookies_fp)
+
+    new_user_email,new_user_pass,new_user_username,is_premium_activated,is_premium_cancelled = premium_account_gen_flow(
+        card_number=card_number,
+        card_exp_month=card_exp_month,
+        card_exp_year=card_exp_year,
+        card_cvv=card_cvv
+    )
+
+    if new_user_email == "" or not is_premium_activated:
+        return False
+
+    if is_premium_activated and not is_premium_cancelled:
+        print("\n!!MANUALLY CANCEL SUBSCRIPTION, premium activated but not cancelled!!")
+        print(f"email: {new_user_email}")
+        print(f"password: {new_user_pass}\n")
+        return False
+    
+
+    dev_sess.delete_all_dashboard_users()
+    dev_sess.add_dashboard_user(new_user_email)
+
+    print(f"added {new_user_email} to application dashboard.")
+
+
+    print("\nmanually authenticate with user credentials:")
+    print(f"email: {new_user_email}")
+    print(f"password: {new_user_pass}\n")
+
+    while True:
+        inp = input("manually open *guest chrome browser*, ensure it is *last selected chrome browser* before continuining. May copy playlists to incorrect account if not done. \n(type 'next' to continue)\n> ")
+        if inp.lower() == "next":
+            break
+
+
+    print("awaiting manual oAuth authentication")
+    OAUTH = SpotifyOAuth(
         client_id=os.getenv("SPOTIFY_CLIENT_ID"),
         client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
         redirect_uri=os.getenv("SPOTIFY_REDIRECT_URI"),
         open_browser=True,
         scope="playlist-modify-private,playlist-read-private,playlist-modify-public,user-library-modify,user-library-read",
-        username=os.getenv("SPOTIFY_USERNAME"),
+        username=new_user_username,
     )
 
-spotify = spotipy.Spotify(
-    client_credentials_manager=OAUTH
-)
+    spotipy_client = Spotify(
+        client_credentials_manager=OAUTH
+    )
 
-def rip_playlist(playlist_id:str,playlist_name:str | None = None) -> bool:
-    """copy a playlist from another user to your own account.
+    rip_playlist_count = rip_all_playlists(target_user_id=rip_playlists_from_user_target_id,spotipy_client=spotipy_client)
 
-    Args:
-        playlist_id (str): the id of the playlist to copy
-        playlist_name (str | None, optional): A custom name for the playlist, if None will copy the existing playlist name. Defaults to None.
+    print(f"successfully ripped {rip_playlist_count} playlist(s) from user '{rip_playlists_from_user_target_id}' to {new_user_email}")
 
-    Returns:
-        bool: True
-    """
-    current_user = spotify.me()
-
-    target_playlist = spotify.playlist(playlist_id=playlist_id)
-    
-    #pull all track ids from within target playlist
-    track_uris : list[str] = []
-    for item in target_playlist["tracks"]["items"]:
-        track = item["track"]
-        track_uris.append(track["uri"])
-    
-
-    if playlist_name == None:
-        #copy playlist name
-        playlist_name = target_playlist["name"]
-
-    #create new playlist
-    new_playlist = spotify.user_playlist_create(current_user["id"],playlist_name,description="flynnhillier")
-
-    spotify.playlist_add_items(playlist_id=new_playlist["id"],items=track_uris)
+    print(f"\nlogin at:")
+    print(f"email: {new_user_email}")
+    print(f"password: {new_user_pass}\n")
 
     return True
 
 
+if __name__ == "__main__":
+    main()
+    input("press enter to blow up")
 
-def rip_all_playlists(target_user_id:str) -> bool:
-    """rip all the playlists publicly available within the target_user_id's profile.
 
-    Args:
-        target_user_id (str): the id of the user to rip playlists from
 
-    Returns:
-        bool: True
-    """
 
-    target_playlists = spotify.user_playlists(target_user_id)
 
-    playlist_ids : list[str] = []
 
-    for item in target_playlists["items"]:
-        playlist_ids.append(item["id"])
 
-    for playlist_id in playlist_ids:
-        rip_playlist(playlist_id)
-    
-    return True
