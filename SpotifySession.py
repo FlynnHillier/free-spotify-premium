@@ -11,6 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
 
 class SpotifySession:
     def __init__(self,cookies_fp:str | None = None):
@@ -141,7 +142,7 @@ class SpotifySession:
             WebDriverWait(self.driver,timeout=15).until(
                 EC.url_contains("https://www.spotify.com/uk/account/overview/")
             )
-        except TimeoutError:
+        except TimeoutException:
             #did not redirect in time
             return False
         
@@ -171,9 +172,11 @@ class SpotifySession:
             WebDriverWait(self.driver,timeout=5).until(
                 EC.element_to_be_clickable((By.ID,"onetrust-accept-btn-handler"))
             )
-        except:
+        except TimeoutException:
             #popup did not show
             return False
+
+        sleep(3) #sleep here because error as apparently element is not in reality clickable.
 
         self.driver.find_element(By.ID,"onetrust-accept-btn-handler").click()
         return True
