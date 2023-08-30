@@ -8,9 +8,11 @@ from spotipy.oauth2 import SpotifyOAuth
 from spotipy import Spotify
 from pathlib import Path
 
+premium_promotion_url = "https://www.spotify.com/purchase/offer/2023-midyear-v2-trial-3m" #augaust 2023
+
 rip_playlists_from_user_target_id = ""
 
-developer_cookies_fp = ""
+developer_cookies_fp = "admin.pkl"
 dev_email = ""
 dev_pass = ""
 
@@ -46,6 +48,7 @@ def main():
     dev_sess.save_cookies(developer_cookies_fp)
 
     new_user_email,new_user_pass,new_user_username,is_premium_activated,is_premium_cancelled = premium_account_gen_flow(
+        premium_promotion_url=premium_promotion_url,
         card_number=card_number,
         card_exp_month=card_exp_month,
         card_exp_year=card_exp_year,

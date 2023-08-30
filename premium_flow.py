@@ -4,16 +4,15 @@ from time import sleep
 
 
 
-premium_promotion_url = "https://www.spotify.com/purchase/offer/2023-midyear-v2-trial-3m"
-
 
 def premium_account_gen_flow(
+    premium_promotion_url:str,
     card_number:str, #xxxxxxxxxxxxxxxx (16)
     card_exp_month:str, #xx
     card_exp_year:str, #xx
     card_cvv:str, #xxx
     email:str | None = None,
-    password:str | None = None,
+    password:str | None = None
 ) -> Tuple[str,str,str,bool,bool]:
     session = SpotifySession(cookies_fp=None)
 
