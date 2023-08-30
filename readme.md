@@ -9,7 +9,7 @@ This works by utilsing the 3 month free spotify premium that spotify periodicall
 A valid set of card details are required to sign up to spotify premium, even their free premium-promotions. While this is the case, *your card is* __*not*__ *charged*. Feel free to look through the code, it is more than reasonable to be cautious entering such details into foreign code.
 
 #### how many cards do i need?
-Spotify only allows for users to claim a promotion *once per set of card details*. This means if you wish to create multiple accounts, a proportionate amount of extra card details are required. I reccommend utiling the virtual-bank 'revolut' which offers up to 20 virtual cards which can be created/deleted free of charge and very-often. By creating a card, then deleting it after use - an unlimited amount of card details is accessible. (Note, if using revolut, the 'disposable' virtual card will not be accepted by spotify)
+Spotify only allows for users to claim a promotion *once per set of card details*. This means if you wish to create multiple accounts, a proportionate amount of extra card details are required. I recommend utiling the virtual-bank 'revolut' which offers up to 20 virtual cards which can be created/deleted free of charge and very-often. By creating a card, then deleting it after use - an unlimited amount of card details is accessible. (Note, if using revolut, the 'disposable' virtual card will not be accepted by spotify)
 
 
 # Setup
@@ -58,4 +58,4 @@ the card detail's variables are self-explanitory. See [here](#why-are-my-card-de
 # Usage
 run main.py and follow the instructions as they're provided.
 
-It is worth mentioned a few steps require manual interaction. Most notably, it is likely spotify will requred additional confirmation on your card, which you must confirm on whatever device you bank on.
+It is worth mentioning a few steps require manual interaction. Most notably, it is likely spotify will request additional confirmation on your card, which you must confirm on whatever device you bank on.
