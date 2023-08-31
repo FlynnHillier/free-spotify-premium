@@ -2,7 +2,7 @@
 This project utilises undetected chromedriver to automatically claim usable free spotify premium accounts.
 
 #### demo
-https://youtu.be/9Ut2RB4x21c
+https://www.youtube.com/watch?v=nLWsOZhSex4
 
 ## Questions
 #### How does it work?
