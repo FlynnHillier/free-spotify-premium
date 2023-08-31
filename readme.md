@@ -1,6 +1,9 @@
 # Description
 This project utilises undetected chromedriver to automatically claim usable free spotify premium accounts.
 
+#### demo
+https://youtu.be/9Ut2RB4x21c
+
 ## Questions
 #### How does it work?
 This works by utilsing the 3 month free spotify premium that spotify periodically offers to new users. By generating new accounts, this promotion is capable of being claimed. Then by using the official spotify developer API, playlists from previous accounts can be copied onto the newly generated accounts, making them instantly usable.

@@ -50,7 +50,7 @@ def rip_playlist(playlist_id:str,playlist_name:str | None = None,spotipy_client:
         playlist_name = target_playlist["name"]
 
     #create new playlist
-    new_playlist = spotipy_client.user_playlist_create(current_user["id"],playlist_name,description="flynnhillier")
+    new_playlist = spotipy_client.user_playlist_create(current_user["id"],playlist_name,description="https://github.com/FlynnHillier")
 
     if(len(track_uris) > 0):
         spotipy_client.playlist_add_items(playlist_id=new_playlist["id"],items=track_uris)
