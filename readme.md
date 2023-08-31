@@ -29,10 +29,18 @@ To generate the tokens required to access spotify's public API, use [this link](
 
 ## enviroment variables
 Create a file named `.env` in the top level directory. Populate it with the following keys.
-- SPOTIFY_CLIENT_ID
-- SPOTIFY_CLIENT_SECRET
-- SPOTIFY_REDIRECT_URI 
-- SPOTIFY_USERNAME <\optional> 
+- **SPOTIFY_CLIENT_ID**
+- **SPOTIFY_CLIENT_SECRET**
+- **SPOTIFY_REDIRECT_URI**
+- **SPOTIFY_USERNAME** *optional*
+- **DEV_EMAIL**\
+the email of the spotify account under which the developer dashboard is setup. (the account for which you did [this step](#spotify-developer))
+
+- **DEV_PASS**\
+the password of the spotify account under which the developer dashboard is setup. (the account for which you did [this step](#spotify-developer))
+
+- **card details**\
+the card detail's variables are self-explanitory. See [here](#why-are-my-card-details-required) for why they're needed.
 
 ## main.py
 To use the functionality provided in main.py, fill in the variables at the top of the script.
@@ -46,15 +54,6 @@ the url of the current free premium spotify promotion
 
 - **developer_cookies_fp**\
 a filepath at which cookies will be stored for the spotify session of the account under which the spotify developer dashboard is set up.
-
-- **dev_email**\
-the email of the spotify account under which the developer dashboard is setup. (the account for which you did [this step](#spotify-developer))
-
-- **dev_pass**\
-the password of the spotify account under which the developer dashboard is setup. (the account for which you did [this step](#spotify-developer))
-
-- **card details**\
-the card detail's variables are self-explanitory. See [here](#why-are-my-card-details-required) for why they're needed.
 
 
 
