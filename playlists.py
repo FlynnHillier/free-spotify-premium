@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+import json
 
 load_dotenv()
 
@@ -83,3 +84,81 @@ def rip_all_playlists(target_user_id:str,spotipy_client: spotipy.Spotify | None 
         rip_playlist(playlist_id,spotipy_client=spotipy_client)
     
     return len(playlist_ids)
+
+
+def fetch_playlists_over_limit(spotipy_client: spotipy.Spotify | None = None,limit:int = 300) -> list[any]:
+    if spotipy_client == None:
+        spotipy_client = default_client
+    
+    me = spotipy_client.me()
+
+    individual_req_limit = 50
+    playlists = []
+    fetched = 0
+    while limit - fetched > 0:
+        #fetch more playlists
+        new_playlists = spotipy_client.user_playlists(me["id"],limit=individual_req_limit,offset=fetched)["items"]
+        playlists = playlists + new_playlists
+
+        fetched += len(new_playlists)
+
+        if len(new_playlists) < individual_req_limit:
+            break
+
+    
+    return playlists
+
+
+
+
+
+def delete_all_duplicate_playlists(spotipy_client: spotipy.Spotify | None = None,reattempt_from_json_fp:str | None = None) -> int:
+    if spotipy_client == None:
+        spotipy_client = default_client
+    
+    
+    if reattempt_from_json_fp == None:
+        playlists = fetch_playlists_over_limit(spotipy_client=spotipy_client)
+    else:
+        with open(reattempt_from_json_fp,"r") as r:
+            playlists = json.load(r.read())["to_delete"]
+
+
+
+    me = spotipy_client.me()
+
+    encountered_playlist_names = []
+    duplicate_playlists_ids = []
+
+    print(f"fetched {len(playlists)} playlists")
+
+    for playlist in playlists:
+        if playlist["name"] in encountered_playlist_names:
+            duplicate_playlists_ids.append(playlist["id"])
+        else:
+            encountered_playlist_names.append(playlist["name"])
+
+
+    print(f"identified {len(duplicate_playlists_ids)} duplicate playlists.")
+
+    ## delete
+
+    for i,duplicate_playlist_id in enumerate(duplicate_playlists_ids):
+        try:
+            spotipy_client.user_playlist_unfollow(me["id"],duplicate_playlist_id)
+        except spotipy.exceptions.SpotifyException:
+            print("spotify exception")
+            #failed (probably due to rate limit), write progress to json to retry later.
+            with open("temp.json") as f:
+                f.write(json.dumps({
+                    "to_delete":duplicate_playlists_ids[i:]
+                }))
+
+    
+    return len(duplicate_playlists_ids)
+
+
+
+
+if __name__ == "__main__":
+    delete_all_duplicate_playlists()
