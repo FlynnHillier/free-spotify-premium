@@ -13,13 +13,14 @@ premium_promotion_url = "https://www.spotify.com/purchase/offer/2023-midyear-v2-
 rip_playlists_from_user_target_id = ""
 
 developer_cookies_fp = "admin.pkl"
-dev_email = ""
-dev_pass = ""
 
-card_number = "" # xxxxxxxxxxxxxxxx
-card_exp_month = "" # xx
-card_exp_year = "" # xx
-card_cvv = "" # xxx
+dev_email = os.getenv("DEV_EMAIL")
+dev_pass = os.getenv("DEV_PASS")
+
+card_number = os.getenv("CARD_NUMBER")  # xxxxxxxxxxxxxxxx
+card_exp_month = os.getenv("CARD_EXP_MONTH") # xx
+card_exp_year = os.getenv("CARD_EXP_YEAR") # xx
+card_cvv = os.getenv("CARD_CVV") # xxx
 
 
 def main():
