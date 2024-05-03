@@ -1,3 +1,14 @@
+# Update May 2024:
+
+This library uses selenium webdriver to automate the signup process; This approach is reliant on pages HTML staying relatively untouched, as a result it is very succeptible to breaking when the site updates.
+
+I have created a **new repository** that does not automate signup, but still allows for playlist copying. The new repo provides instructions on how you can achieve free premium, with minimal manual input. This new repository is not succeptable to breaking with updates, unless spotify alters/deprecates their developer api - which is not likely to occur.
+
+[new project repo](https://github.com/FlynnHillier/spotify-playlist-copy)
+
+
+
+
 # Description
 This project utilises undetected chromedriver to automatically claim usable free spotify premium accounts.
 
